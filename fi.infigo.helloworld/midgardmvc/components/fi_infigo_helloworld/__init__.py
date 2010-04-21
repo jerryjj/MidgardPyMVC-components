@@ -12,9 +12,11 @@ class HelloWorldComponent(ComponentBase):
     __routes_prefix__ = "/HelloWorld"
     
     def initialize(self):
-        component_root = os.path.dirname(os.path.abspath(__file__))
-        self.__templates_dir__ = os.path.join(component_root, 'templates')
-    
+        self.component_root = os.path.dirname(os.path.abspath(__file__))
+        self.__config_dir__ = os.path.join(self.component_root, 'config')
+        self.__templates_dir__ = os.path.join(self.component_root, 'templates')
+        self.__static_files__ = os.path.join(self.component_root, 'public')
+        
     def say(self):
         print _("Hello, World!")
 
