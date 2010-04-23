@@ -12,6 +12,8 @@ import time
 import simplejson
 import datetime
 
+from pylons.decorators.rest import restrict
+
 from cogen.core import queue, events
 from cogen.core.coroutines import coro
 from cogen.core.pubsub import PublishSubscribeQueue
@@ -43,16 +45,15 @@ class Client:
         yield pubsub.subscribe()
         while 1:
             messages = yield pubsub.fetch()
-            print messages
             try:
                 yield self.messages.put_nowait(messages)
             except:
-                print 'Client %s is dead.' % self
                 self.dead = True
                 break
 
 class PostController(BaseController):
     
+    @restrict('POST')
     def new(self):
         """This action puts a message in the global queue that all the clients
         will get via the 'pull' action."""
