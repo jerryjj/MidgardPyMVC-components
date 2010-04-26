@@ -5,6 +5,7 @@ from pylons.i18n.translation import _
 from midgardmvc.components.base import ComponentBase
 
 class ChatComponent(ComponentBase):
+    __name__ = __name__
     __routes__ = [
         Route(None, "/", controller="fi_infigo_chat/main", action="index"),
         Route(None, "/index", controller="fi_infigo_chat/main", action="index"),
@@ -14,10 +15,7 @@ class ChatComponent(ComponentBase):
     __routes_prefix__ = "/chat"
     
     def initialize(self):
-        self.component_root = os.path.dirname(os.path.abspath(__file__))
-        self.__config_dir__ = os.path.join(self.component_root, 'config')
-        self.__templates_dir__ = os.path.join(self.component_root, 'templates')
-        self.__static_files__ = os.path.join(self.component_root, 'public')
+        pass
 
 def make_component(component_config=None):
     return ChatComponent(config=component_config)
