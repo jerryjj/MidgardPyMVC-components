@@ -14,19 +14,31 @@ from midgardmvc.lib.midgard.auth import prepare_password
 from pylons.decorators import validate
 import formencode
 
-class RegistrationForm(formencode.Schema):
+import midgardmvc.model.midgard.person
+class RegistrationForm(midgardmvc.model.midgard.person.FormSchema):
     allow_extra_fields = True
     filter_extra_fields = False
     
     if request.environ["pylons.routes_dict"].get("phase", None) == "start":
         firstname = formencode.validators.String(not_empty=True)
         lastname = formencode.validators.String(not_empty=True)
+        homepage = formencode.validators.String(not_empty=False)
         
         if not request.environ["fi.infigo.account"].config["registration"].get("username_is_email", False):
             email = formencode.validators.Email()        
             login = formencode.validators.String(not_empty=True)
         else:
-            login = formencode.validators.Email()
+            login = formencode.validators.Email(not_empty=True)
+
+def resolveRegistrationForm():
+    custom_schema = request.environ["fi.infigo.account"].config["registration"].get("schema", None)
+    if custom_schema:
+        from repoze.who.utils import resolveDotted
+        klass = resolveDotted(custom_schema)
+        
+        return klass()
+        
+    return RegistrationForm()
 
 class MainController(BaseController):
     
@@ -38,9 +50,12 @@ class MainController(BaseController):
         
         return render('fi.infigo.account/index.mako')
     
-    @validate(schema=RegistrationForm(), form='register')
+    @validate(schema=resolveRegistrationForm(), form='register')
     def register(self, phase=None, guid=None):
         c.title += ":: " + _("Register")
+        
+        # from midgardmvc.model.midgard import resolveSchemaFields
+        # print resolveSchemaFields(h.midgard.mgdschema.midgard_person)
         
         c.hide_email = request.environ["fi.infigo.account"].config["registration"].get("username_is_email", False)
         
