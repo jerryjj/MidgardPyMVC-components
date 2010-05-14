@@ -11,6 +11,10 @@
 			<label>Lastname:</label> ${h.text('lastname', "")}
 		</div>
 		
+		<div>
+			<label>Homepage:</label> ${h.text('homepage', "")}
+		</div>
+		
 		% if not c.hide_email:
 		<div>
 			<label>Username:</label> ${h.text('login', "")}
