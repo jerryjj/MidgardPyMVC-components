@@ -1,4 +1,5 @@
 registration:
+    schema: midgardmvc.controllers.fi_infigo_account.main:RegistrationForm
     username_is_email: false    
     validation:
         enabled: false
