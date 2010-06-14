@@ -11,8 +11,12 @@ import midgardmvc.lib.helpers as h
 from midgardmvc.lib.midgard.auth import get_active_user, get_active_user_person
 from midgardmvc.lib.midgard.auth import prepare_password
 
+import midgardmvc.components.fi_infigo_account.lib.helpers as account_helpers
+
 from pylons.decorators import validate
 import formencode
+
+from turbomail import Message
 
 import midgardmvc.model.midgard.person
 class RegistrationForm(midgardmvc.model.midgard.person.FormSchema):
@@ -129,7 +133,8 @@ class MainController(BaseController):
         
         user = h.midgard.db.user()
         user.login = data.get("login").encode('utf-8')
-        user.password = prepare_password("password", "Plaintext")
+        password = account_helpers.generatePassword(8)
+        user.password = prepare_password(password, "Plaintext")
         user.authtype = "Plaintext"
         user.active = True
         
@@ -156,5 +161,18 @@ class MainController(BaseController):
         
         if auto_login:
             user.log_in()
-        
+
+            if request.environ["fi.infigo.account"].config["registration"].get("send_login_info_by_email", True):
+                message_content = ''
+                message_content += _("Your login details") + "\n"
+                message_content += _("Login:") + user.login
+                message_content += "\n"
+                message_content += _("Password:") + user.login
+                message = Message(request.environ["fi.infigo.account"].config["email"].get("default_sender"), person.email, _("Registration details"))
+                message.plain = message_content
+                try:
+                    status = message.send()
+                except Exception, e:
+                    h.flash_alert(_("Failed sending mail, reason: %(reason)s") % {'reason': e})
+
         return [user, person]

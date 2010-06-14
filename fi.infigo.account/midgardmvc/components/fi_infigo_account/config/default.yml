@@ -1,6 +1,9 @@
 registration:
     schema: midgardmvc.controllers.fi_infigo_account.main:RegistrationForm
-    username_is_email: false    
+    username_is_email: false
+    send_login_info_by_email: true
     validation:
         enabled: false
         backend: email
+email:
+    default_sender: no-reply@midgard-project.org

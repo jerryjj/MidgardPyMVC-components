@@ -13,9 +13,10 @@ setup(
     author_email='jerry.jalava@infigo.fi',
     url='',
     namespace_packages = ['midgardmvc', 'midgardmvc.components', 'midgardmvc.controllers'],
-    # install_requires=[
+    install_requires=[
     #     "midgardmvc>=0.1",
-    # ],
+        "turbomail",
+    ],
     test_suite='nose.collector',
     packages=find_packages(exclude=['ez_setup']),
     include_package_data=True,
